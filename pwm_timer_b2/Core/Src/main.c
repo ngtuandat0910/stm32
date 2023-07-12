@@ -56,10 +56,12 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 uint8_t duty= 0;
 uint8_t Count= 0;
+uint8_t right = 1;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
@@ -68,12 +70,26 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		if (Count == 5)
 		{
+			if (right == 1)
+			{
 				duty++;
-			 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,duty);
-			 Count=0;
-			 if (duty == 100) {
-				duty = 0;
+				__HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,duty);
+				if (duty == 100)
+				{
+					right = 0;
+				}
 			}
+
+			if (right == 0)
+			{
+				duty--;
+				__HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_1,duty);
+				if (duty == 0)
+				{
+					right = 1;
+				}
+			}
+			Count = 0;
 		}
 	}
 }
